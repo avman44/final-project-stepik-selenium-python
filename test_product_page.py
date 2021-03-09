@@ -9,6 +9,7 @@ def test_guest_should_see_login_link_on_product_page(browser):
     page.open()
     page.should_be_login_link()
 
+@pytest.mark.need_review
 def test_guest_can_go_to_login_page_from_product_page(browser):
     link = "http://selenium1py.pythonanywhere.com/en-gb/catalogue/the-city-and-the-stars_95/"
     page = ProductPage(browser, link)
@@ -25,15 +26,14 @@ def test_guest_can_go_to_login_page_from_product_page(browser):
                                    pytest.param("http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offe", marks=pytest.mark.xfail),
                                   "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer8",
                                   "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer9"])
+@pytest.mark.need_review
 def test_guest_can_add_product_to_basket(browser, link):
     page = ProductPage(browser, link)
     page.open()
-    product_name = browser.find_element_by_tag_name("h1").text
-    product_price = browser.find_element_by_class_name("price_color").text
     page.add_to_basket()
     page.solve_quiz_and_get_code()
-    page.should_be_product_add_to_basket_message(product_name)
-    page.should_be_basket_price(product_price)
+    page.should_be_product_add_to_basket_message()
+    page.should_be_basket_price()
 
 @pytest.mark.xfail
 def test_guest_cant_see_success_message_after_adding_product_to_basket(browser):
@@ -57,6 +57,7 @@ def test_message_disappeared_after_adding_product_to_basket(browser):
     page.add_to_basket()
     page.should_be_disappeared_success_message()
 
+@pytest.mark.need_review
 def test_guest_cant_see_product_in_basket_opened_from_product_page(browser):
     link = "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/"
     page = ProductPage(browser, link)
@@ -65,14 +66,13 @@ def test_guest_cant_see_product_in_basket_opened_from_product_page(browser):
     basket_page = BasketPage(browser, browser.current_url)
     basket_page.should_be_empty_basket()
 
-@pytest.mark.reg
 class TestUserAddToBasketFromProductPage:
     @pytest.fixture(scope="function", autouse=True)
     def setup(self, browser):
         link = "http://selenium1py.pythonanywhere.com/accounts/login/"
         page = LoginPage(browser, link)
-        email = str(time.time()) + "@fake.net"
-        password = str(time.time())
+        email = str(time.time()) + "@tstng.net"
+        password = "testtesttest123"
         page.open()
         page.register_new_user(email, password)
         page.should_be_authorized_user()
@@ -83,12 +83,11 @@ class TestUserAddToBasketFromProductPage:
         self.page.open()
         self.page.should_not_be_success_message()
 
+    @pytest.mark.need_review
     def test_user_can_add_product_to_basket(self, browser):
         link = "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/"
         self.page = ProductPage(browser, link)
         self.page.open()
-        product_name = browser.find_element_by_tag_name("h1").text
-        product_price = browser.find_element_by_class_name("price_color").text
         self.page.add_to_basket()
-        self.page.should_be_product_add_to_basket_message(product_name)
-        self.page.should_be_basket_price(product_price)
+        self.page.should_be_product_add_to_basket_message()
+        self.page.should_be_basket_price()
