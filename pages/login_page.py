@@ -25,4 +25,3 @@ class LoginPage(BasePage):
         confirm_password_field.send_keys(password)
         register_button = self.browser.find_element(*LoginPageLocators.REGISTER_BUTTON)
         register_button.click()
-
